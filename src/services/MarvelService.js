@@ -1,7 +1,7 @@
 import {useHttp} from '../hooks/http.hook';
 
 const useMarvelService = () => {
-    const {loading, request, error, clearError} = useHttp();
+    const {loading, request, error, clearError,process,setProcess} = useHttp();
 
     const _apiBase = 'https://gateway.marvel.com:443/v1/public/';
     const _apiKey = 'apikey=b46c0c40b07bc2e1c4d57dc6764e16fa';
@@ -9,6 +9,18 @@ const useMarvelService = () => {
 
     const getAllCharacters = async (offset = _baseOffset) => {
         const res = await request(`${_apiBase}characters?limit=9&offset=${offset}&${_apiKey}`);
+        return res.data.results.map(_transformCharacter);
+    }
+
+    // const getAllCharacters = async (offset = _baseOffset, name = '') => {
+    //     const res = await request(`${_apiBase}characters?limit=9&offset=${offset}${name ? `&name=${name}` : '' }&${_apiKey}`);
+    //     return res.data.results.map(_transformCharacter);
+    // }
+
+    // Или можно создать отдельный метод для поиска по имени
+
+    const getCharacterByName = async (name) => {
+        const res = await request(`${_apiBase}characters?name=${name}&${_apiKey}`);
         return res.data.results.map(_transformCharacter);
     }
 
@@ -51,7 +63,16 @@ const useMarvelService = () => {
         }
     }
 
-    return {loading, error, clearError, getAllCharacters, getCharacter, getAllComics, getComic}
+    return {loading, 
+        error, 
+        clearError,
+        process,
+        setProcess, 
+        getAllCharacters, 
+        getCharacterByName, 
+        getCharacter, 
+        getAllComics, 
+        getComic}
 }
 
 export default useMarvelService;
